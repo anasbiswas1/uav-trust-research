@@ -64,8 +64,8 @@ def prepare_splits(df, label_col, normal_value, held_out_family,
     """Build the binary label and attack-family-held-out splits.
 
     Returns a dict with scaled feature matrices and labels for train, cal,
-    seen-test and shift-test, plus metadata (resolved held-out family, seen
-    families, dropped columns, per-sample family labels for the two test sets).
+    seen-test and shift-test, per-sample family labels (including fam_train),
+    and metadata (resolved held-out family, seen families, dropped columns).
     """
     families = [v for v in df[label_col].unique() if v != normal_value]
     match = [f for f in families
@@ -102,7 +102,7 @@ def prepare_splits(df, label_col, normal_value, held_out_family,
         "held_out": held_out, "seen_families": seen_families,
         "dropped": {"id_leakage": drop_cols, "constant": const, "encoded": cat},
         "feature_names": list(feat.columns),
-        "X_train": tf(tr), "y_train": y[tr],
+        "X_train": tf(tr), "y_train": y[tr], "fam_train": fam[tr],
         "X_cal": tf(ca), "y_cal": y[ca],
         "X_seen": tf(seen), "y_seen": y[seen], "fam_seen": fam[seen],
         "X_shift": tf(shift), "y_shift": y[shift], "fam_shift": fam[shift],

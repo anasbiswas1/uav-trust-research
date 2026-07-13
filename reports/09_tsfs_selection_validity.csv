@@ -1,0 +1,11 @@
+dataset,held_out,n_features,rho_internal_oracle,topk_jaccard
+UAVIDS-2025,Sybil Attack,16,0.183,0.2
+UAVIDS-2025,Blackhole Attack,16,0.245,0.2
+UAVIDS-2025,Wormhole Attack,16,0.537,0.2
+UAVIDS-2025,Flooding Attack,16,0.473,0.5
+UAV-NIDD,DDoS,3061,0.629,0.943
+UAV-NIDD,UDP Flooding,3061,0.752,0.931
+UAV-NIDD,MITM,3061,0.736,0.949
+UAV-NIDD,Jamming,3061,0.667,0.931
+UAV-NIDD,BruteForce,3061,0.709,0.943
+UAV-NIDD,De-authentication,3061,0.608,0.925
