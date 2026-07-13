@@ -1,0 +1,5 @@
+held_out,shift_balacc,shap_cosine
+Blackhole Attack,0.7421,-0.0123
+Wormhole Attack,0.9116,0.573
+Flooding Attack,0.9942,0.424
+Sybil Attack,0.9947,0.3587
