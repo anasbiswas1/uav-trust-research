@@ -60,12 +60,14 @@ def _split_idx(idx, fracs, seed):
 
 
 def prepare_splits(df, label_col, normal_value, held_out_family,
-                   drop_patterns, normal_fracs, family_fracs, seed):
+                   drop_patterns, normal_fracs, family_fracs, seed, max_categories=50):
     """Build the binary label and attack-family-held-out splits.
 
-    Returns a dict with scaled feature matrices and labels for train, cal,
-    seen-test and shift-test, per-sample family labels (including fam_train),
-    and metadata (resolved held-out family, seen families, dropped columns).
+    Categorical columns with more than max_categories distinct values are treated
+    as identifiers and dropped before one-hot encoding, which removes address- or
+    id-polluted columns and keeps the feature space compact. Returns scaled matrices
+    and labels for train/cal/seen-test/shift-test, per-sample family labels (with
+    fam_train), and metadata (resolved held-out family, seen families, dropped cols).
     """
     families = [v for v in df[label_col].unique() if v != normal_value]
     match = [f for f in families
@@ -79,6 +81,10 @@ def prepare_splits(df, label_col, normal_value, held_out_family,
     const = [c for c in feat.columns if feat[c].nunique(dropna=False) <= 1]
     feat = feat.drop(columns=const)
     cat = [c for c in feat.columns if not pd.api.types.is_numeric_dtype(feat[c])]
+    high_card = [c for c in cat if feat[c].nunique(dropna=False) > max_categories]
+    if high_card:
+        feat = feat.drop(columns=high_card)
+        cat = [c for c in cat if c not in high_card]
     feat = pd.get_dummies(feat, columns=cat, dummy_na=False)
     feat = feat.replace([np.inf, -np.inf], np.nan).fillna(0.0)
 
@@ -100,7 +106,8 @@ def prepare_splits(df, label_col, normal_value, held_out_family,
     tf = lambda ix: scaler.transform(X[ix])
     return {
         "held_out": held_out, "seen_families": seen_families,
-        "dropped": {"id_leakage": drop_cols, "constant": const, "encoded": cat},
+        "dropped": {"id_leakage": drop_cols, "constant": const,
+                    "high_cardinality": high_card, "encoded": cat},
         "feature_names": list(feat.columns),
         "X_train": tf(tr), "y_train": y[tr], "fam_train": fam[tr],
         "X_cal": tf(ca), "y_cal": y[ca],
