@@ -60,14 +60,17 @@ def _split_idx(idx, fracs, seed):
 
 
 def prepare_splits(df, label_col, normal_value, held_out_family,
-                   drop_patterns, normal_fracs, family_fracs, seed, max_categories=50):
+                   drop_patterns, normal_fracs, family_fracs, seed,
+                   max_categories=50, numeric_coerce_frac=0.95):
     """Build the binary label and attack-family-held-out splits.
 
-    Categorical columns with more than max_categories distinct values are treated
-    as identifiers and dropped before one-hot encoding, which removes address- or
-    id-polluted columns and keeps the feature space compact. Returns scaled matrices
-    and labels for train/cal/seen-test/shift-test, per-sample family labels (with
-    fam_train), and metadata (resolved held-out family, seen families, dropped cols).
+    Columns that are mostly parseable as numbers (at least numeric_coerce_frac of
+    non-null values) are coerced to numeric first, so real numeric features that
+    were read as text (stray tokens, mixed types) are preserved rather than treated
+    as categorical. Remaining categorical columns with more than max_categories
+    distinct values are dropped as identifiers. Returns scaled matrices and labels
+    for train/cal/seen-test/shift-test, per-sample family labels (with fam_train),
+    and metadata including the dropped columns.
     """
     families = [v for v in df[label_col].unique() if v != normal_value]
     match = [f for f in families
@@ -77,7 +80,17 @@ def prepare_splits(df, label_col, normal_value, held_out_family,
 
     drop_cols = [c for c in df.columns if c != label_col
                  and any(p in c.lower() for p in drop_patterns)]
-    feat = df.drop(columns=drop_cols + [label_col])
+    feat = df.drop(columns=drop_cols + [label_col]).copy()
+
+    # recover numeric columns misread as text: coerce, keep as numeric if mostly parseable
+    coerced = []
+    for c in feat.columns:
+        if not pd.api.types.is_numeric_dtype(feat[c]):
+            conv = pd.to_numeric(feat[c], errors="coerce")
+            nn = feat[c].notna().sum()
+            if nn > 0 and conv.notna().sum() >= numeric_coerce_frac * nn:
+                feat[c] = conv; coerced.append(c)
+
     const = [c for c in feat.columns if feat[c].nunique(dropna=False) <= 1]
     feat = feat.drop(columns=const)
     cat = [c for c in feat.columns if not pd.api.types.is_numeric_dtype(feat[c])]
@@ -107,7 +120,7 @@ def prepare_splits(df, label_col, normal_value, held_out_family,
     return {
         "held_out": held_out, "seen_families": seen_families,
         "dropped": {"id_leakage": drop_cols, "constant": const,
-                    "high_cardinality": high_card, "encoded": cat},
+                    "high_cardinality": high_card, "encoded": cat, "coerced_numeric": coerced},
         "feature_names": list(feat.columns),
         "X_train": tf(tr), "y_train": y[tr], "fam_train": fam[tr],
         "X_cal": tf(ca), "y_cal": y[ca],
