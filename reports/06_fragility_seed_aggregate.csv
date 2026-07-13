@@ -1,0 +1,5 @@
+held_out,frag_mean,frag_std,balacc_mean,balacc_std
+Blackhole Attack,5.111992,0.52965,0.730602,0.018535
+Wormhole Attack,3.04137,0.47282,0.905658,0.006026
+Flooding Attack,1.167536,0.374955,0.992922,0.002367
+Sybil Attack,2.426016,0.305241,0.993661,0.000737
