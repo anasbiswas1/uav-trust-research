@@ -1,11 +1,11 @@
 dataset,held_out,coverage_marginal,coverage_balanced
-UAV-NIDD,BruteForce,0.985,0.5105
-UAV-NIDD,DDoS,0.1259,0.0643
-UAV-NIDD,De-authentication,0.8726,0.509
-UAV-NIDD,Jamming,0.394,0.222
-UAV-NIDD,MITM,0.0056,0.0451
-UAV-NIDD,UDP Flooding,0.5312,0.2915
-UAVIDS-2025,Blackhole Attack,0.4079,0.5971
-UAVIDS-2025,Flooding Attack,0.7206,0.7603
-UAVIDS-2025,Sybil Attack,0.9043,0.8685
-UAVIDS-2025,Wormhole Attack,0.632,0.7104
+UAV-NIDD,BruteForce,0.6317,0.3747
+UAV-NIDD,DDoS,0.0262,0.0648
+UAV-NIDD,De-authentication,0.79,0.4611
+UAV-NIDD,Jamming,0.006,0.073
+UAV-NIDD,MITM,0.3846,0.25
+UAV-NIDD,UDP Flooding,0.8268,0.508
+UAVIDS-2025,Blackhole Attack,0.4083,0.5989
+UAVIDS-2025,Flooding Attack,0.7176,0.7614
+UAVIDS-2025,Sybil Attack,0.9116,0.8743
+UAVIDS-2025,Wormhole Attack,0.635,0.7201

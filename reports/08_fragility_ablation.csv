@@ -1,3 +1,3 @@
 dataset,worst_family,balacc_full,balacc_ablated,balcov_full,balcov_ablated
 UAVIDS-2025,Blackhole Attack,0.7338,0.8552,0.5882,0.6236
-UAV-NIDD,DDoS,0.9963,0.9926,0.0,0.7281
+UAV-NIDD,Jamming,0.9798,0.9891,0.0,0.5044
