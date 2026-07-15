@@ -1,8 +1,8 @@
 ,UAV-NIDD,UAVIDS-2025
-coverage: families below 0.80 marg,4.0,3.0
+coverage: families below 0.80 marg,5.0,3.0
 accuracy: families below 0.90 balacc,0.0,1.0
 ECE: families above 0.10,0.0,2.0
 AURC: families above 0.05,0.0,1.0
-mean coverage shortfall,0.34,0.235
-mean ECE gain,0.012,0.142
-mean accuracy-error gain,0.006,0.089
+mean coverage shortfall,0.573,0.235
+mean ECE gain,0.017,0.142
+mean accuracy-error gain,0.01,0.089
