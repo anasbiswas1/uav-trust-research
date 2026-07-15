@@ -1,0 +1,11 @@
+dataset,held_out,XGBoost,RandomForest,MLP
+UAV-NIDD,BruteForce,0.656,0.57,0.987
+UAV-NIDD,DDoS,0.065,0.336,0.0
+UAV-NIDD,De-authentication,0.285,0.362,0.89
+UAV-NIDD,Jamming,0.001,0.038,0.974
+UAV-NIDD,MITM,0.151,0.889,0.106
+UAV-NIDD,UDP Flooding,0.802,0.776,0.988
+UAVIDS-2025,Blackhole Attack,0.408,0.357,0.498
+UAVIDS-2025,Flooding Attack,0.718,0.55,0.967
+UAVIDS-2025,Sybil Attack,0.912,0.935,0.971
+UAVIDS-2025,Wormhole Attack,0.635,0.539,0.651
