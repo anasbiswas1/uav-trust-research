@@ -1,0 +1,11 @@
+dataset,held_out,empty,{normal},{attack},{both},coverage(marg)
+UAV-NIDD,BruteForce,0.015,0.0,0.984,0.0,0.985
+UAV-NIDD,DDoS,0.924,0.0,0.076,0.0,0.076
+UAV-NIDD,De-authentication,0.136,0.001,0.864,0.0,0.864
+UAV-NIDD,Jamming,0.48,0.0,0.52,0.0,0.52
+UAV-NIDD,MITM,0.466,0.0,0.533,0.0,0.534
+UAV-NIDD,UDP Flooding,0.534,0.0,0.466,0.0,0.466
+UAVIDS-2025,Blackhole Attack,0.592,0.076,0.332,0.0,0.408
+UAVIDS-2025,Flooding Attack,0.282,0.096,0.622,0.0,0.718
+UAVIDS-2025,Sybil Attack,0.088,0.081,0.83,0.0,0.912
+UAVIDS-2025,Wormhole Attack,0.357,0.083,0.56,0.0,0.635
