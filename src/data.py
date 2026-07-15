@@ -43,15 +43,16 @@ def _split_idx(idx,fracs,seed):
     return out
 
 def prepare_splits(df,label_col,normal_value,held_out_family,drop_patterns,
-                   normal_fracs,family_fracs,seed,max_categories=50,
-                   numeric_coerce_frac=0.95,max_distinct=50):
+                   normal_fracs,family_fracs,seed,max_categories=50,numeric_coerce_frac=0.95):
     """Attack-family-held-out splits with deterministic feature cleaning.
 
-    Cleaning order: (1) drop leakage/id columns by name; (2) drop ANY column whose
-    distinct-value count exceeds max_distinct, numeric or not, so high-cardinality
-    identifiers (e.g. wlan.tag, frame.number) cannot survive by parsing as numbers;
-    (3) coerce mostly-numeric columns to numeric to preserve real features misread as
-    text; (4) drop constants; (5) one-hot the remaining low-cardinality categoricals.
+    A column is kept as numeric if at least numeric_coerce_frac of its non-null values
+    parse as numbers (real features misread as text, e.g. frame.len). Any column that
+    does NOT meet that bar is treated as categorical, and is one-hot encoded only if it
+    has at most max_categories distinct values; otherwise it is dropped as a
+    high-cardinality identifier (e.g. wlan.tag, ip.ttl, arp.hw.type). This depends only
+    on parse rate and categorical cardinality, never on numeric distinct-count, so the
+    feature space is identical on full data and on any subsample.
     """
     families=[v for v in df[label_col].unique() if v!=normal_value]
     match=[f for f in families if str(f).strip().lower()==str(held_out_family).strip().lower()]
@@ -61,12 +62,7 @@ def prepare_splits(df,label_col,normal_value,held_out_family,drop_patterns,
     drop_cols=[c for c in df.columns if c!=label_col and any(p in c.lower() for p in drop_patterns)]
     feat=df.drop(columns=drop_cols+[label_col]).copy()
 
-    # (2) hard identifier cap BEFORE coercion: any column with too many distinct values is an id
-    high_distinct=[c for c in feat.columns if feat[c].nunique(dropna=False)>max_distinct
-                   and not pd.api.types.is_float_dtype(feat[c])]
-    if high_distinct: feat=feat.drop(columns=high_distinct)
-
-    # (3) recover numeric columns misread as text
+    # coerce mostly-numeric columns; the rest stay categorical
     coerced=[]
     for c in feat.columns:
         if not pd.api.types.is_numeric_dtype(feat[c]):
@@ -75,7 +71,7 @@ def prepare_splits(df,label_col,normal_value,held_out_family,drop_patterns,
 
     const=[c for c in feat.columns if feat[c].nunique(dropna=False)<=1]; feat=feat.drop(columns=const)
     cat=[c for c in feat.columns if not pd.api.types.is_numeric_dtype(feat[c])]
-    high_card=[c for c in cat if feat[c].nunique(dropna=False)>max_categories]
+    high_card=[c for c in cat if feat[c].nunique(dropna=False)>max_categories]   # junk that failed coercion
     if high_card: feat=feat.drop(columns=high_card); cat=[c for c in cat if c not in high_card]
     feat=pd.get_dummies(feat,columns=cat,dummy_na=False).replace([np.inf,-np.inf],np.nan).fillna(0.0)
 
@@ -90,8 +86,8 @@ def prepare_splits(df,label_col,normal_value,held_out_family,drop_patterns,
     tr,ca,seen,shift=(np.array(sorted(a)) for a in (tr,ca,seen,shift))
     scaler=StandardScaler().fit(X[tr]); tf=lambda ix:scaler.transform(X[ix])
     return {"held_out":held_out,"seen_families":seen_families,
-        "dropped":{"id_leakage":drop_cols,"high_distinct":high_distinct,"constant":const,
-                   "high_cardinality":high_card,"encoded":cat,"coerced_numeric":coerced},
+        "dropped":{"id_leakage":drop_cols,"constant":const,"high_cardinality":high_card,
+                   "encoded":cat,"coerced_numeric":coerced},
         "feature_names":list(feat.columns),
         "X_train":tf(tr),"y_train":y[tr],"fam_train":fam[tr],
         "X_cal":tf(ca),"y_cal":y[ca],
