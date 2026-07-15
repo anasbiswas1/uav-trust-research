@@ -1,13 +1,15 @@
 """Data loading, schema detection, and attack-family-held-out splitting for
 UAV network-IDS datasets.
 """
-import glob, os
+import glob, os, re
 import numpy as np, pandas as pd
 from sklearn.preprocessing import StandardScaler
 
 LABEL_NAMES = {"label","class","attack","category","type","target","attack_type","traffic_type"}
 NORMAL_NAMES = {"normal","benign","0","none","clean"}
 KNOWN_CLASSES = {"normal","blackhole","flooding","sybil","wormhole","benign","attack","dos","ddos","replay","fuzzy"}
+_MAC = re.compile(r"^([0-9a-fA-F]{2}:){5}[0-9a-fA-F]{2}$")
+_IP  = re.compile(r"^\d{1,3}(\.\d{1,3}){3}$")
 
 def load_csvs(data_dir):
     csvs=glob.glob(os.path.join(data_dir,"**/*.csv"),recursive=True)
@@ -34,6 +36,13 @@ def detect_schema(df,label_col=None,normal_value=None):
     families=[v for v in df[label_col].unique() if v!=normal_value]
     return label_col,normal_value,families
 
+def _addr_fraction(s, sample=5000):
+    v=s.dropna()
+    if len(v)==0: return 0.0
+    if len(v)>sample: v=v.sample(sample, random_state=0)
+    hit=v.astype(str).str.strip().map(lambda x: bool(_MAC.match(x) or _IP.match(x)))
+    return float(hit.mean())
+
 def _split_idx(idx,fracs,seed):
     idx=np.array(idx); rng=np.random.default_rng(seed); rng.shuffle(idx)
     out,start,keys={},0,list(fracs)
@@ -43,16 +52,17 @@ def _split_idx(idx,fracs,seed):
     return out
 
 def prepare_splits(df,label_col,normal_value,held_out_family,drop_patterns,
-                   normal_fracs,family_fracs,seed,max_categories=50,numeric_coerce_frac=0.95):
-    """Attack-family-held-out splits with deterministic feature cleaning.
+                   normal_fracs,family_fracs,seed,max_categories=50,numeric_coerce_frac=0.95,
+                   addr_frac_thresh=0.30):
+    """Attack-family-held-out splits with deterministic, leakage-safe feature cleaning.
 
-    A column is kept as numeric if at least numeric_coerce_frac of its non-null values
-    parse as numbers (real features misread as text, e.g. frame.len). Any column that
-    does NOT meet that bar is treated as categorical, and is one-hot encoded only if it
-    has at most max_categories distinct values; otherwise it is dropped as a
-    high-cardinality identifier (e.g. wlan.tag, ip.ttl, arp.hw.type). This depends only
-    on parse rate and categorical cardinality, never on numeric distinct-count, so the
-    feature space is identical on full data and on any subsample.
+    Cleaning: (1) drop named leakage/id columns; (2) drop any column where more than
+    addr_frac_thresh of values are MAC/IP addresses (address-pollution backstop, e.g.
+    wlan.tag, ip.proto); (3) keep as numeric any column parsing >=numeric_coerce_frac
+    (real features misread as text, e.g. frame.len); (4) among remaining categoricals,
+    one-hot those with <=max_categories distinct values, drop the rest as identifiers.
+    Depends only on named lists, address format, parse rate, and categorical cardinality,
+    never on numeric distinct-count, so the feature space is identical on any subsample.
     """
     families=[v for v in df[label_col].unique() if v!=normal_value]
     match=[f for f in families if str(f).strip().lower()==str(held_out_family).strip().lower()]
@@ -62,7 +72,9 @@ def prepare_splits(df,label_col,normal_value,held_out_family,drop_patterns,
     drop_cols=[c for c in df.columns if c!=label_col and any(p in c.lower() for p in drop_patterns)]
     feat=df.drop(columns=drop_cols+[label_col]).copy()
 
-    # coerce mostly-numeric columns; the rest stay categorical
+    addr_cols=[c for c in feat.columns if not pd.api.types.is_numeric_dtype(feat[c]) and _addr_fraction(feat[c])>addr_frac_thresh]
+    if addr_cols: feat=feat.drop(columns=addr_cols)
+
     coerced=[]
     for c in feat.columns:
         if not pd.api.types.is_numeric_dtype(feat[c]):
@@ -71,7 +83,7 @@ def prepare_splits(df,label_col,normal_value,held_out_family,drop_patterns,
 
     const=[c for c in feat.columns if feat[c].nunique(dropna=False)<=1]; feat=feat.drop(columns=const)
     cat=[c for c in feat.columns if not pd.api.types.is_numeric_dtype(feat[c])]
-    high_card=[c for c in cat if feat[c].nunique(dropna=False)>max_categories]   # junk that failed coercion
+    high_card=[c for c in cat if feat[c].nunique(dropna=False)>max_categories]
     if high_card: feat=feat.drop(columns=high_card); cat=[c for c in cat if c not in high_card]
     feat=pd.get_dummies(feat,columns=cat,dummy_na=False).replace([np.inf,-np.inf],np.nan).fillna(0.0)
 
@@ -86,8 +98,8 @@ def prepare_splits(df,label_col,normal_value,held_out_family,drop_patterns,
     tr,ca,seen,shift=(np.array(sorted(a)) for a in (tr,ca,seen,shift))
     scaler=StandardScaler().fit(X[tr]); tf=lambda ix:scaler.transform(X[ix])
     return {"held_out":held_out,"seen_families":seen_families,
-        "dropped":{"id_leakage":drop_cols,"constant":const,"high_cardinality":high_card,
-                   "encoded":cat,"coerced_numeric":coerced},
+        "dropped":{"id_leakage":drop_cols,"address_polluted":addr_cols,"constant":const,
+                   "high_cardinality":high_card,"encoded":cat,"coerced_numeric":coerced},
         "feature_names":list(feat.columns),
         "X_train":tf(tr),"y_train":y[tr],"fam_train":fam[tr],
         "X_cal":tf(ca),"y_cal":y[ca],
