@@ -1,0 +1,5 @@
+dataset,held_out,gradual,sharp,cov_only_sharp
+UAVIDS-2025,Blackhole Attack,,0.0,
+UAVIDS-2025,Flooding Attack,0.0,0.0,1.0
+UAVIDS-2025,Sybil Attack,0.0,0.0,
+UAVIDS-2025,Wormhole Attack,,0.0,

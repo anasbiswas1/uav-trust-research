@@ -1,0 +1,9 @@
+dataset,UAV-NIDD,UAV-NIDD,UAVIDS-2025,UAVIDS-2025
+mode,gradual,sharp,gradual,sharp
+runs,48.0,48.0,32.0,32.0
+cov_fired_%,4.2,12.5,12.5,15.6
+err_fired_%,12.5,12.5,18.8,12.5
+cov_only (err never fired) %,4.2,12.5,6.2,3.1
+coverage_leads_% (when both fire),,,0.0,0.0
+median_lead_steps,,,0.0,0.0
+mean_lead_steps,,,0.0,0.0

@@ -1,11 +1,11 @@
 dataset,held_out,frag_rf,RandomForest
-UAVIDS-2025,Sybil Attack,0.006,0.935
-UAVIDS-2025,Blackhole Attack,0.018,0.357
-UAVIDS-2025,Wormhole Attack,0.003,0.539
+UAVIDS-2025,Sybil Attack,0.0065,0.935
+UAVIDS-2025,Blackhole Attack,0.0183,0.357
+UAVIDS-2025,Wormhole Attack,0.0026,0.539
 UAVIDS-2025,Flooding Attack,0.005,0.55
-UAV-NIDD,DDoS,0.0,0.336
+UAV-NIDD,DDoS,0.0004,0.336
 UAV-NIDD,UDP Flooding,0.0,0.776
 UAV-NIDD,MITM,0.0,0.889
-UAV-NIDD,Jamming,0.0,0.038
-UAV-NIDD,BruteForce,0.0,0.57
+UAV-NIDD,Jamming,0.0001,0.038
+UAV-NIDD,BruteForce,0.0001,0.57
 UAV-NIDD,De-authentication,0.0,0.362
