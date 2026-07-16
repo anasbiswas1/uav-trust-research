@@ -1,0 +1,6 @@
+dataset,family,coverage,CI_low,CI_high,n_seeds
+UAV-NIDD,Jamming,0.001,0.0,0.002,10
+UAV-NIDD,DDoS,0.065,0.029,0.114,10
+UAVIDS-2025,Blackhole Attack,0.408,0.408,0.409,10
+UAV-CAS,Blackhole,0.557,0.552,0.563,10
+UAV-CAS,Wormhole,0.546,0.54,0.552,10

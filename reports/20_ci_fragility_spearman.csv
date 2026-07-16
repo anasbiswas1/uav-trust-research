@@ -1,0 +1,4 @@
+dataset,n_families,spearman,CI_low,CI_high
+UAVIDS-2025,4,-0.8,-1.0,1.0
+UAV-NIDD,6,-0.886,-1.0,-0.2
+UAV-CAS,5,-0.9,-1.0,-0.111
