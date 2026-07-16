@@ -1,0 +1,12 @@
+dataset,held_out,id_cov,shift_cov_marg,shift_cov_bal,shift_balacc
+UAV-CAS,Blackhole,0.906,0.583,0.691,0.504
+UAV-CAS,DDoS,0.902,0.999,0.999,0.986
+UAV-CAS,DoS,0.903,0.999,0.999,0.986
+UAV-CAS,Replay,0.898,0.89,0.787,0.503
+UAV-CAS,Wormhole,0.899,0.577,0.674,0.505
+UAV-NIDD,BruteForce,0.995,0.852,0.579,0.993
+UAV-NIDD,DDoS,0.806,0.327,0.185,0.993
+UAV-NIDD,De-authentication,0.991,0.0,0.0,0.44
+UAV-NIDD,Jamming,0.99,0.623,0.418,0.993
+UAV-NIDD,MITM,0.875,0.996,0.759,1.0
+UAV-NIDD,UDP Flooding,0.994,0.624,0.511,0.993
