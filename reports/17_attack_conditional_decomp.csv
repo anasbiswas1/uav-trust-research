@@ -1,0 +1,16 @@
+dataset,held_out,one_minus_q,safe_empty,dangerous_wrong_normal,correct_attack,uninformative_both
+UAV-CAS,Blackhole,0.197,0.0,0.654,0.001,0.346
+UAV-CAS,DDoS,0.265,0.0,0.001,0.996,0.003
+UAV-CAS,DoS,0.269,0.0,0.0,1.0,0.0
+UAV-CAS,Replay,0.258,0.0,0.461,0.001,0.537
+UAV-CAS,Wormhole,0.208,0.0,0.7,0.001,0.298
+UAV-NIDD,BruteForce,1.0,0.33,0.0,0.67,0.0
+UAV-NIDD,DDoS,1.0,0.862,0.0,0.138,0.0
+UAV-NIDD,De-authentication,1.0,0.185,0.0,0.815,0.0
+UAV-NIDD,Jamming,1.0,0.751,0.0,0.249,0.0
+UAV-NIDD,MITM,1.0,0.731,0.0,0.268,0.0
+UAV-NIDD,UDP Flooding,1.0,0.202,0.0,0.798,0.0
+UAVIDS-2025,Blackhole Attack,1.0,0.634,0.0,0.366,0.0
+UAVIDS-2025,Flooding Attack,1.0,0.295,0.0,0.705,0.0
+UAVIDS-2025,Sybil Attack,1.0,0.079,0.0,0.921,0.0
+UAVIDS-2025,Wormhole Attack,1.0,0.375,0.009,0.616,0.0
