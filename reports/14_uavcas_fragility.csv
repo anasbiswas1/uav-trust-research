@@ -1,0 +1,6 @@
+held_out,frag_raw,frag_raw_s,frag_norm
+Blackhole,0.611,0.146,0.146
+DDoS,0.001,0.001,0.002
+DoS,0.0,0.0,0.0
+Replay,0.21,0.087,0.076
+Wormhole,0.634,0.128,0.158
