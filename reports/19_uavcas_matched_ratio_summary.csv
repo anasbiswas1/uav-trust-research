@@ -1,0 +1,11 @@
+target,held_out,id_cov,shift_cov_marg,shift_cov_bal,one_minus_q
+balanced_0.5,Blackhole,0.902,0.806,0.806,0.154
+balanced_0.5,DDoS,0.901,0.999,0.999,0.24
+balanced_0.5,DoS,0.901,0.999,0.999,0.251
+balanced_0.5,Replay,0.902,0.831,0.831,0.237
+balanced_0.5,Wormhole,0.899,0.78,0.78,0.161
+natural,Blackhole,0.842,0.556,0.671,0.198
+natural,DDoS,0.849,0.999,0.998,0.265
+natural,DoS,0.855,0.998,0.999,0.269
+natural,Replay,0.853,0.881,0.769,0.258
+natural,Wormhole,0.841,0.54,0.646,0.21
